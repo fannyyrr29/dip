@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Flask cache and debug log files
+instance/
+.webassets-cache
+
+# Pytest
+.cache
+
+# PHP specific
+vendor/
+composer.lock
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
