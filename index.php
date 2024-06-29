@@ -10,28 +10,29 @@
 </head>
 <body>
     <h1 class="h3 text-center mb-3">Image Classfication</h1>
-    <form class="container w-75 text-center">
-            <fieldset class="upload_dropZone text-center mp-10 mb-3 p-4 w-50" style="margin-left: auto; margin-right: auto;">
+    <form id="uploadForm" class="container w-75 text-center">
+        <fieldset class="upload_dropZone text-center mp-10 mb-3 p-4 w-50" style="margin-left: auto; margin-right: auto;">
 
-                <legend class="visually-hidden">Image uploader</legend>
+            <legend class="visually-hidden">Image uploader</legend>
 
-                <svg class="upload_svg" width="60" height="60" aria-hidden="true">
-                    <use href="#icon-imageUpload"></use>
-                </svg>
+            <svg class="upload_svg" width="60" height="60" aria-hidden="true">
+                <use href="#icon-imageUpload"></use>
+            </svg>
 
-                <p class="small my-2">Drag &amp; Drop background image(s) inside dashed region<br><i>or</i></p>
+            <p class="small my-2">Drag &amp; Drop background image(s) inside dashed region<br><i>or</i></p>
 
-                <input id="upload_image_background" data-post-name="image_background" data-post-url="https://someplace.com/image/uploads/backgrounds/" class="position-absolute invisible" type="file" multiple accept="image/jpeg, image/png, image/svg+xml" />
+            <input id="upload_image_background" data-post-name="image_background" data-post-url="https://someplace.com/image/uploads/backgrounds/" class="position-absolute invisible" type="file" multiple accept="image/jpeg, image/png, image/svg+xml" />
 
-                <label class="btn btn-upload mb-3" for="upload_image_background">Choose file(s)</label>
+            <label class="btn btn-upload mb-3" for="upload_image_background">Choose file(s)</label>
 
-                <div class="upload_gallery d-flex flex-wrap justify-content-center gap-3 mb-0"></div>
+            <div class="upload_gallery d-flex flex-wrap justify-content-center gap-3 mb-0"></div>
 
-            </fieldset>
-            <input type="submit" value="Upload" name="upload" class="btn btn-info">
-        </form>
-  
+        </fieldset>
+        <button type="submit" class="btn btn-info">Upload</button>
+    </form>
+
     <h2 class="h5 text-center mt-3 mb-3">Result</h2>
+    <div class="result text-center mt-2"></div>
     <svg style="display:none">
         <defs>
             <symbol id="icon-imageUpload" clip-rule="evenodd" viewBox="0 0 96 96">
@@ -40,6 +41,40 @@
         </defs>
     </svg>
     <script src="script.js"></script>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let imgSend = document.getElementsByClassName('upload_img')[0];
+            console.log(imgSend)
+            if (imgSend && imgSend.src){
+                let base64Image = imgSend.src.split(',')[1];
+
+                fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ base64Image: base64Image })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => { throw new Error(`Network response was not ok: ${response.status} - ${text}`); });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.querySelector('.result').innerHTML = JSON.stringify(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.querySelector('.result').innerHTML = `Error: ${error.message}`;
+                });
+            } else {
+                alert('Please select an image file.');
+            }
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
