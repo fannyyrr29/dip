@@ -13,6 +13,7 @@ CORS(app)
 def predict():
     if 'base64Image' in request.json:
         base64Image = request.json['base64Image']
+        hog = request.json['hog']
 
         # Decode base64 to image data
         try:
@@ -22,7 +23,7 @@ def predict():
             img = cv.imdecode(np_data, cv.IMREAD_COLOR)
 
             # Preprocess the image
-            input_data = preprocess_image(img)
+            input_data = preprocess_image(img, hog)
 
             # Make prediction
             label = predict_result(input_data)

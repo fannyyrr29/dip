@@ -10,17 +10,20 @@ model_old = 'model/drone_bird_modelv1.sav'
 model = joblib.load(model_best)
 
 
-def preprocess_image(img, target_size=(128, 72)):
+def preprocess_image(img, target_size=(128, 72), hog_=True):
     img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
     img = cv.resize(img, target_size, interpolation=cv.INTER_AREA)
     img_blur = cv.bilateralFilter(img, 7, 75, 100)
 
     laplacian = cv.Laplacian(img_blur, cv.CV_64F, ksize=3)
     img_laplacian = cv.convertScaleAbs(img_blur - laplacian)
+    image_data = img_laplacian
 
-    hog_features, hog_image = hog(img_laplacian, orientations=9, pixels_per_cell=(16, 16), cells_per_block=(2, 2),
+    if hog_:
+        hog_features, hog_image = hog(img_laplacian, orientations=9, pixels_per_cell=(16, 16), cells_per_block=(2, 2),
                                   block_norm='L2-Hys', visualize=True, transform_sqrt=True)
-    return hog_features
+        image_data = hog_features
+    return image_data
 
 
 def predict_result(predict_img):
