@@ -30,10 +30,10 @@
             <label class="btn btn-upload mb-3" for="upload_image_background">Choose file(s)</label>
 
             <div class="upload_gallery d-flex flex-wrap justify-content-center gap-3 mb-0"></div>
-            <div class="checkbox_hog">
+            <!-- <div class="checkbox_hog">
                 <input class="form-check-input" type="checkbox" name="hog" id="hog">
                 <label class="form-check-label" for="hog">Use HOG?</label>
-            </div>
+            </div> -->
         </fieldset>
         <button type="submit" class="btn btn-info">Upload</button>
     </form>
@@ -53,34 +53,38 @@
         document.getElementById('uploadForm').addEventListener('submit', function (event) {
             event.preventDefault();
 
-            let imgSend = document.getElementsByClassName('upload_img')[0];
-            let checkbox = document.getElementById('hog').checked;
-
-            if (imgSend && imgSend.src) {
-                let base64Image = imgSend.src.split(',')[1];
-
-                fetch('http://127.0.0.1:5000/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ base64Image: base64Image, hog: checkbox })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.text().then(text => { throw new Error(`Network response was not ok: ${response.status} - ${text}`); });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        document.querySelector('.result').innerHTML = JSON.stringify(data);
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        document.querySelector('.result').innerHTML = `Error: ${error.message}`;
-                    });
+            if (document.getElementsByClassName('upload_img').length > 1) {
+                alert('Please select only 1 image. You can refresh the website to try reupload');
             } else {
-                alert('Please select an image file.');
+                let imgSend = document.getElementsByClassName('upload_img')[0];
+                //let checkbox = document.getElementById('hog').checked;
+
+                if (imgSend && imgSend.src) {
+                    let base64Image = imgSend.src.split(',')[1];
+
+                    fetch('http://127.0.0.1:5000/predict', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ base64Image: base64Image })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => { throw new Error(`Network response was not ok: ${response.status} - ${text}`); });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            document.querySelector('.result').innerHTML = JSON.stringify(data);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            document.querySelector('.result').innerHTML = `Error: ${error.message}`;
+                        });
+                } else {
+                    alert('Please select an image file.');
+                }
             }
         });
     </script>

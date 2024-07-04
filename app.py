@@ -13,7 +13,8 @@ CORS(app)
 def predict():
     if 'base64Image' in request.json:
         base64Image = request.json['base64Image']
-        hog = request.json['hog']
+        # hog = request.json['hog']
+        hog = True
 
         # Decode base64 to image data
         try:

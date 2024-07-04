@@ -8,7 +8,7 @@ model_best = 'model/drone_bird_modelv2.sav'
 model_old = 'model/drone_bird_modelv1.sav'
 
 model = joblib.load(model_best)
-model_ = joblib.load(model_old)
+model_nohog = joblib.load(model_old)
 
 def preprocess_image(img, target_size=(128, 72), hog_=True):
     img = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
@@ -31,6 +31,6 @@ def predict_result(predict_img, hog_=True):
     if hog_:
         result = model.predict(predict_img.reshape(1, -1))
     else:
-        result = model_.predict(predict_img.reshape(1, -1))
+        result = model_nohog.predict(predict_img.reshape(1, -1))
     # confidence = model.predict_proba(predict_img.reshape(1, -1))
     return result
