@@ -23,10 +23,10 @@ def predict():
             img = cv.imdecode(np_data, cv.IMREAD_COLOR)
 
             # Preprocess the image
-            input_data = preprocess_image(img, hog)
+            input_data = preprocess_image(img, hog_=hog)
 
             # Make prediction
-            label = predict_result(input_data)
+            label = predict_result(input_data, hog)
 
             # Return prediction as JSON
             return jsonify({'label': label[0]})
